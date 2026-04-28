@@ -1,0 +1,12 @@
+# Binaries
+dist/
+colselect
+colselect.exe
+
+# mise local config
+.mise.local.toml
+
+# Go
+*.test
+*.out
+vendor/

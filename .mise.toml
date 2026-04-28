@@ -1,0 +1,37 @@
+[tools]
+go = "1.23"
+
+[tasks.build-linux-amd64]
+description = "Build for Linux amd64"
+run = "GOOS=linux GOARCH=amd64 go build -o dist/colselect-linux-amd64 ."
+
+[tasks.build-linux-arm64]
+description = "Build for Linux arm64"
+run = "GOOS=linux GOARCH=arm64 go build -o dist/colselect-linux-arm64 ."
+
+[tasks.build-macos-amd64]
+description = "Build for macOS amd64"
+run = "GOOS=darwin GOARCH=amd64 go build -o dist/colselect-macos-amd64 ."
+
+[tasks.build-macos-arm64]
+description = "Build for macOS arm64 (Apple Silicon)"
+run = "GOOS=darwin GOARCH=arm64 go build -o dist/colselect-macos-arm64 ."
+
+[tasks.build-windows-amd64]
+description = "Build for Windows amd64"
+run = "GOOS=windows GOARCH=amd64 go build -o dist/colselect-windows-amd64.exe ."
+
+[tasks.build-windows-arm64]
+description = "Build for Windows arm64"
+run = "GOOS=windows GOARCH=arm64 go build -o dist/colselect-windows-arm64.exe ."
+
+[tasks.build-all]
+description = "Build for all platforms and architectures"
+depends = [
+  "build-linux-amd64",
+  "build-linux-arm64",
+  "build-macos-amd64",
+  "build-macos-arm64",
+  "build-windows-amd64",
+  "build-windows-arm64",
+]
