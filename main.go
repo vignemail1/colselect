@@ -11,19 +11,29 @@ import (
 	"strings"
 )
 
+// version is set at build time via -ldflags "-X main.version=<tag>".
+var version = "dev"
+
 func main() {
 	var (
-		pattern   string
-		hasHeader bool
-		sep       string
-		invert    bool
+		pattern    string
+		hasHeader  bool
+		sep        string
+		invert     bool
+		showVersion bool
 	)
 
 	flag.StringVar(&pattern, "pattern", "", "regexp applied on header fields (with -header) or on every field (without -header)")
 	flag.BoolVar(&hasHeader, "header", false, "treat the first line as a header; pattern selects column names")
 	flag.StringVar(&sep, "sep", ";", "field separator: any single character, 'space' (whitespace split), 'tab' or '\\t', 'auto' (whitespace)")
 	flag.BoolVar(&invert, "invert", false, "invert selection: keep columns that do NOT match the pattern")
+	flag.BoolVar(&showVersion, "version", false, "print version and exit")
 	flag.Parse()
+
+	if showVersion {
+		fmt.Printf("colselect %s\n", version)
+		os.Exit(0)
+	}
 
 	if pattern == "" {
 		fmt.Fprintln(os.Stderr, "error: -pattern is required")
