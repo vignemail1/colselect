@@ -11,15 +11,34 @@ import (
 	"strings"
 )
 
-// version is set at build time via -ldflags "-X main.version=<tag>".
-var version = "dev"
+// version and commit are set at build time via:
+//
+//	-ldflags "-X main.version=<tag> -X main.commit=<shorthash>"
+//
+// When version is not overridden, buildVersion() returns:
+//
+//	"dev-<commit>" if commit is known, "dev" otherwise.
+var (
+	version = ""
+	commit  = ""
+)
+
+func buildVersion() string {
+	if version != "" {
+		return version
+	}
+	if commit != "" {
+		return "dev-" + commit
+	}
+	return "dev"
+}
 
 func main() {
 	var (
-		pattern    string
-		hasHeader  bool
-		sep        string
-		invert     bool
+		pattern     string
+		hasHeader   bool
+		sep         string
+		invert      bool
 		showVersion bool
 	)
 
@@ -31,7 +50,7 @@ func main() {
 	flag.Parse()
 
 	if showVersion {
-		fmt.Printf("colselect %s\n", version)
+		fmt.Printf("colselect %s\n", buildVersion())
 		os.Exit(0)
 	}
 
