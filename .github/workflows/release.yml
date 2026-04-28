@@ -44,6 +44,18 @@ jobs:
           go-version-file: go.mod
           cache: true
 
+      - name: Resolve version string
+        id: version
+        run: |
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            VERSION="${{ github.ref_name }}"
+          else
+            VERSION="dev-${SHORT_SHA}"
+          fi
+          echo "value=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "short_sha=${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+
       - name: Build binary
         env:
           GOOS: ${{ matrix.goos }}
@@ -51,7 +63,9 @@ jobs:
           CGO_ENABLED: '0'
         run: |
           mkdir -p dist
-          go build -trimpath -ldflags "-s -w -X main.version=${{ github.ref_name }}" -o dist/${{ matrix.asset }} .
+          go build -trimpath \
+            -ldflags "-s -w -X main.version=${{ steps.version.outputs.value }} -X main.commit=${{ steps.version.outputs.short_sha }}" \
+            -o dist/${{ matrix.asset }} .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
